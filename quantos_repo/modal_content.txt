@@ -1,0 +1,508 @@
+<div id="modal-add-trade" class="modal-overlay">
+      <div
+        class="modal"
+        style="max-width: 800px; max-height: 90vh; overflow-y: auto"
+      >
+        <div
+          class="header"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h2>Log Trade</h2>
+          <i data-lucide="x" onclick="closeModal()" style="cursor: pointer"></i>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label>Account</label>
+            <div class="input-wrapper">
+              <i data-lucide="wallet"></i>
+              <select id="trade-account">
+                <option value="all">Unassigned</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Asset</label>
+            <div class="input-wrapper">
+              <i data-lucide="activity"></i>
+              <input
+                type="text"
+                id="trade-asset"
+                placeholder="e.g. EURUSD, BTC"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <div class="input-wrapper">
+              <i data-lucide="calendar"></i>
+              <input type="date" id="trade-date" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Session</label>
+            <div class="input-wrapper">
+              <i data-lucide="clock"></i>
+              <select id="trade-session">
+                <option value="Asia">Asia</option>
+                <option value="London">London</option>
+                <option value="New York">New York</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label>Entry Time</label>
+            <div class="input-wrapper">
+              <i data-lucide="clock"></i>
+              <input type="time" id="trade-entry-time" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Exit Time</label>
+            <div class="input-wrapper">
+              <i data-lucide="clock"></i>
+              <input type="time" id="trade-exit-time" />
+            </div>
+          </div>
+        </div>
+
+        <div id="trade-nearby-news" style="margin-bottom: 16px; display: none;"></div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label>Entry Model</label>
+            <div class="input-wrapper">
+              <i data-lucide="crosshair"></i>
+              <input
+                type="text"
+                id="trade-model"
+                placeholder="e.g. Breakout, Pullback"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Setup Grade</label>
+            <div class="input-wrapper">
+              <i data-lucide="award"></i>
+              <select id="trade-grade">
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Planned RR</label>
+            <div class="input-wrapper">
+              <i data-lucide="target"></i>
+              <input
+                type="number"
+                id="trade-planned-r"
+                step="0.1"
+                placeholder="e.g. 3.0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label
+              >Exit RR (Actual)
+              <span
+                style="
+                  font-size: 0.75rem;
+                  color: var(--primary);
+                  cursor: pointer;
+                  float: right;
+                "
+                onclick="togglePartials()"
+                >+ Partials Calc</span
+              ></label
+            >
+            <div class="input-wrapper">
+              <i data-lucide="trending-up"></i>
+              <input
+                type="number"
+                id="trade-r"
+                step="0.1"
+                placeholder="e.g. 2.5 or -1"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Commission ($)</label>
+            <div class="input-wrapper">
+              <i data-lucide="dollar-sign"></i>
+              <input
+                type="number"
+                id="trade-commission"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Slippage (Ticks/Pips)</label>
+            <div class="input-wrapper">
+              <i data-lucide="move-vertical"></i>
+              <input
+                type="number"
+                id="trade-slippage"
+                step="0.1"
+                placeholder="0.0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="partials-calculator"
+          style="
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <h4
+            style="
+              margin-top: 0;
+              margin-bottom: 12px;
+              font-size: 0.9rem;
+              color: var(--muted);
+            "
+          >
+            Partial Exits Calculator
+          </h4>
+          <div id="partials-list">
+            <div
+              style="display: flex; gap: 8px; margin-bottom: 8px"
+              class="partial-row"
+            >
+              <input
+                type="number"
+                placeholder="Exit R (e.g. 2)"
+                class="partial-r"
+                style="
+                  flex: 1;
+                  padding: 6px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border);
+                  background: var(--bg);
+                  color: var(--text);
+                "
+              />
+              <input
+                type="number"
+                placeholder="Size % (e.g. 50)"
+                class="partial-size"
+                style="
+                  flex: 1;
+                  padding: 6px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border);
+                  background: var(--bg);
+                  color: var(--text);
+                "
+              />
+            </div>
+            <div
+              style="display: flex; gap: 8px; margin-bottom: 8px"
+              class="partial-row"
+            >
+              <input
+                type="number"
+                placeholder="Exit R (e.g. 4)"
+                class="partial-r"
+                style="
+                  flex: 1;
+                  padding: 6px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border);
+                  background: var(--bg);
+                  color: var(--text);
+                "
+              />
+              <input
+                type="number"
+                placeholder="Size % (e.g. 50)"
+                class="partial-size"
+                style="
+                  flex: 1;
+                  padding: 6px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border);
+                  background: var(--bg);
+                  color: var(--text);
+                "
+              />
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-top: 12px;
+            "
+          >
+            <button
+              class="secondary"
+              style="padding: 4px 8px; font-size: 0.8rem"
+              onclick="addPartialRow()"
+            >
+              + Add Row
+            </button>
+            <button
+              style="padding: 4px 8px; font-size: 0.8rem"
+              onclick="calculateWeightedR()"
+            >
+              Calculate & Apply
+            </button>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label>MAE (Max Adverse Excursion in R)</label>
+            <div class="input-wrapper">
+              <i data-lucide="arrow-down-right"></i>
+              <input
+                type="number"
+                id="trade-mae"
+                step="0.1"
+                placeholder="e.g. -0.5"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>MFE (Max Favorable Excursion in R)</label>
+            <div class="input-wrapper">
+              <i data-lucide="arrow-up-right"></i>
+              <input
+                type="number"
+                id="trade-mfe"
+                step="0.1"
+                placeholder="e.g. 3.0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label>Mistake Made?</label>
+            <div class="input-wrapper">
+              <i data-lucide="alert-circle"></i>
+              <select id="trade-mistake">
+                <option value="None">None</option>
+                <option value="Moved SL">Moved SL</option>
+                <option value="FOMO">FOMO</option>
+                <option value="Revenge Trade">Revenge Trade</option>
+                <option value="Closed Early">Closed Early</option>
+                <option value="Overleveraged">Overleveraged</option>
+                <option value="Ignored Plan">Ignored Plan</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Pre-Trade Emotion</label>
+            <div class="input-wrapper">
+              <i data-lucide="smile"></i>
+              <select id="trade-pre-emotion">
+                <option value="Neutral">Neutral</option>
+                <option value="Confident">Confident</option>
+                <option value="Anxious">Anxious</option>
+                <option value="Frustrated">Frustrated</option>
+                <option value="Euphoric">Euphoric</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Post-Trade Emotion</label>
+            <div class="input-wrapper">
+              <i data-lucide="smile"></i>
+              <select id="trade-post-emotion">
+                <option value="Neutral">Neutral</option>
+                <option value="Satisfied">Satisfied</option>
+                <option value="Relieved">Relieved</option>
+                <option value="Regretful">Regretful</option>
+                <option value="Angry">Angry</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Psychological Score (1-10)</label>
+            <div class="input-wrapper">
+              <i data-lucide="brain"></i>
+              <input
+                type="number"
+                id="trade-psych-score"
+                min="1"
+                max="10"
+                value="10"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="form-group">
+            <label>Tags (comma separated)</label>
+            <div class="input-wrapper">
+              <i data-lucide="tag"></i>
+              <input
+                type="text"
+                id="trade-tags"
+                placeholder="e.g. trend-following, news, high-volatility"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Screenshot URL</label>
+            <div class="input-wrapper">
+              <i data-lucide="image"></i>
+              <input
+                type="text"
+                id="trade-screenshot"
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+          <div class="form-group">
+            <label
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Pre-Trade Plan
+              <button
+                class="secondary"
+                style="padding: 2px 8px; font-size: 0.7rem"
+                onclick="startVoiceRecognition('trade-pre-notes')"
+              >
+                <i data-lucide="mic" style="width: 12px; height: 12px"></i>
+                Dictate
+              </button>
+            </label>
+            <textarea
+              id="trade-pre-notes"
+              rows="3"
+              placeholder="What is the thesis? What are you waiting for?"
+              style="
+                width: 100%;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 12px;
+                color: var(--text);
+                font-family: var(--font-sans);
+              "
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Post-Trade Review
+              <button
+                class="secondary"
+                style="padding: 2px 8px; font-size: 0.7rem"
+                onclick="startVoiceRecognition('trade-post-notes')"
+              >
+                <i data-lucide="mic" style="width: 12px; height: 12px"></i>
+                Dictate
+              </button>
+            </label>
+            <textarea
+              id="trade-post-notes"
+              rows="3"
+              placeholder="How did it play out? What did you learn?"
+              style="
+                width: 100%;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 12px;
+                color: var(--text);
+                font-family: var(--font-sans);
+              "
+            ></textarea>
+          </div>
+        </div>
+
+        <button style="width: 100%; margin-top: 24px" onclick="saveTrade()">
+          Log Trade
+        </button>
+      </div>
+    </div>
+
+    

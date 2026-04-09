@@ -1,0 +1,247 @@
+     <div id="trade-journal" class="view">
+        <div
+          class="header"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <h1>Trade Journal & Strategies</h1>
+            <p>Log trades, analyze performance, and track backtests</p>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button class="secondary" onclick="openModal('add-backtest')">
+              <i data-lucide="flask-conical"></i> Log Backtest
+            </button>
+            <button onclick="openModal('add-trade')">
+              <i data-lucide="plus"></i> Log Trade
+            </button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div
+            class="card col-12"
+            style="margin-bottom: 24px"
+            id="psych-risk-engine"
+          >
+            <div
+              class="header"
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h2>Psychological Risk Engine</h2>
+              <div id="risk-status-badge" class="risk-badge risk-low">
+                Normal
+              </div>
+            </div>
+            <div
+              class="grid"
+              style="
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                margin-top: 16px;
+              "
+            >
+              <div
+                style="
+                  text-align: center;
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 8px;
+                "
+              >
+                <div class="stat-label">Consecutive Losses</div>
+                <div class="stat-value" id="risk-consecutive-losses">0</div>
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 8px;
+                "
+              >
+                <div class="stat-label">Avg. Emotion Score</div>
+                <div class="stat-value" id="risk-emotion-score">100%</div>
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 8px;
+                "
+              >
+                <div class="stat-label">Risk Recommendation</div>
+                <div
+                  class="stat-value"
+                  id="risk-recommendation"
+                  style="font-size: 1.1rem; color: var(--primary)"
+                >
+                  Standard Risk
+                </div>
+              </div>
+            </div>
+            <div
+              id="risk-alert-box"
+              style="
+                margin-top: 16px;
+                padding: 16px;
+                border-radius: 8px;
+                display: none;
+              "
+            >
+              <!-- Alert message here -->
+            </div>
+          </div>
+
+          <div class="card col-12" style="margin-bottom: 24px">
+            <div
+              class="header"
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h2>AI Trade Analyst</h2>
+              <button
+                class="secondary"
+                onclick="generateTradeInsights()"
+                id="btn-trade-ai"
+              >
+                <i data-lucide="brain-circuit"></i> Analyze Trading Patterns
+              </button>
+            </div>
+            <div
+              id="trade-ai-output"
+              style="
+                background: var(--bg);
+                padding: 16px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                min-height: 80px;
+                font-size: 0.9rem;
+                line-height: 1.6;
+                color: var(--muted);
+                max-height: 300px;
+                overflow-y: auto;
+              "
+            >
+              Click "Analyze Trading Patterns" to get deep insights on your
+              psychological patterns, common mistakes, and strategy improvements
+              based on your logged trades.
+            </div>
+          </div>
+
+          <div class="card col-2">
+            <div class="stat-label">Total R-Multiple</div>
+            <div class="stat-value" id="tj-total-r">0.00R</div>
+          </div>
+          <div class="card col-2">
+            <div class="stat-label">Win Rate</div>
+            <div class="stat-value" id="tj-win-rate">0%</div>
+          </div>
+          <div class="card col-2">
+            <div class="stat-label">Profit Factor</div>
+            <div class="stat-value" id="tj-profit-factor">0.00</div>
+          </div>
+          <div class="card col-2">
+            <div class="stat-label">Max Drawdown (R)</div>
+            <div class="stat-value" id="tj-max-dd" style="color: var(--danger)">
+              0.00R
+            </div>
+          </div>
+          <div class="card col-2">
+            <div class="stat-label">Best Streak</div>
+            <div
+              class="stat-value"
+              id="tj-best-streak"
+              style="color: var(--success)"
+            >
+              0
+            </div>
+          </div>
+          <div class="card col-2">
+            <div class="stat-label">Mistake Cost (R)</div>
+            <div
+              class="stat-value"
+              id="tj-mistake-cost"
+              style="color: var(--danger)"
+            >
+              0.00R
+            </div>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top: 24px">
+          <div class="card col-8">
+            <div class="header">
+              <h2>Trade Equity Curve</h2>
+              <div class="risk-badge risk-low">Cumulative R</div>
+            </div>
+            <div style="position: relative; height: 280px; width: 100%">
+              <canvas id="tradeEquityChart"></canvas>
+            </div>
+          </div>
+          <div class="card col-4">
+            <div class="header">
+              <h2>Setup Grade Distribution</h2>
+            </div>
+            <div style="position: relative; height: 280px; width: 100%">
+              <canvas id="tradeGradeChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top: 24px">
+          <div class="card col-6">
+            <div class="header">
+              <h2>Asset Breakdown (Total R)</h2>
+            </div>
+            <div style="position: relative; height: 240px; width: 100%">
+              <canvas id="tradeAssetChart"></canvas>
+            </div>
+          </div>
+          <div class="card col-6">
+            <div class="header">
+              <h2>Model Breakdown (Total R)</h2>
+            </div>
+            <div style="position: relative; height: 240px; width: 100%">
+              <canvas id="tradeModelChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 24px">
+          <div
+            class="header"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <div style="display: flex; gap: 16px; align-items: center">
+              <h2>Trading Calendar</h2>
+              <div
+                style="
+                  display: flex;
+                  gap: 4px;
+                  background: var(--bg);
+                  padding: 4px;
+                  border-radius: 8px;
+                  border: 1px solid var(--border);
+                "
+              >
+                <button
+                  id="cal-tab-rr"
+                  onclick="setCalendarTab('rr')"
+                  style="
+        

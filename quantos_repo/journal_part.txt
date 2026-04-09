@@ -1,0 +1,65 @@
+     <div id="trade-journal" class="view">
+        <div
+          class="header"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <h1>Trade Journal & Strategies</h1>
+            <p>Log trades, analyze performance, and track backtests</p>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button class="secondary" onclick="openModal('add-backtest')">
+              <i data-lucide="flask-conical"></i> Log Backtest
+            </button>
+            <button onclick="openModal('add-trade')">
+              <i data-lucide="plus"></i> Log Trade
+            </button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div
+            class="card col-12"
+            style="margin-bottom: 24px"
+            id="psych-risk-engine"
+          >
+            <div
+              class="header"
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h2>Psychological Risk Engine</h2>
+              <div id="risk-status-badge" class="risk-badge risk-low">
+                Normal
+              </div>
+            </div>
+            <div
+              class="grid"
+              style="
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                margin-top: 16px;
+              "
+            >
+              <div
+                style="
+                  text-align: center;
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 8px;
+                "
+              >
+                <div class="stat-label">Consecutive Losses</div>
+                <div class="stat-value" id="risk-consecutive-losses">0</div>
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  paddi
