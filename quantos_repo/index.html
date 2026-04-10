@@ -10,7 +10,16 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script type="module" src="/core/sync.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "firebase/app": "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js",
+          "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js",
+          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"
+        }
+      }
+    </script>
+    <script type="module" src="./core/sync.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
@@ -4834,7 +4843,11 @@
     </div>
 
     <script type="module">
-      window.ENV_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+      try {
+        window.ENV_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+      } catch(e) {
+        window.ENV_GEMINI_API_KEY = "";
+      }
     </script>
     <script>
       async function callGemini(prompt, outputElementId, buttonId) {

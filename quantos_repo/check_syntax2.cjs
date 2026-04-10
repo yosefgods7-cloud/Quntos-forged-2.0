@@ -4,14 +4,12 @@ const scriptMatches = html.match(/<script.*?>([\s\S]*?)<\/script>/gi);
 if (scriptMatches) {
     scriptMatches.forEach((script, i) => {
         const content = script.replace(/<script.*?>|<\/script>/gi, '');
-        if (content.trim()) {
+        if (content.trim() && !script.includes('type="importmap"') && !script.includes('type="module"')) {
             try {
-                // For module scripts, new Function might fail on import/export, so we ignore those errors
-                if (!script.includes('type="module"')) {
-                    new Function(content);
-                }
+                new Function(content);
             } catch (e) {
                 console.error(`Syntax error in script ${i}:`, e.message);
+                console.log(content.substring(0, 200));
             }
         }
     });
